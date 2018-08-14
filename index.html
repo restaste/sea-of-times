@@ -75,6 +75,24 @@
 				"location": "The Wilds, East of Marauder's Arch",
 				"isActive": (realWorldTime, inGameTime) => realWorldTime.getMonth() == 7 && realWorldTime.getDate() >= 8 && realWorldTime.getDate() <= 14 && inGameTime.getDate() > 20 && inGameTime.getDate() <= 30,
 				"description": "Raises or lowers anchor"
+			},
+			{
+				"title": "The Sandman's Revenge",
+				"location": "The Shores of Plenty, North West of Smuggler's Bay",
+				"isActive": (realWorldTime, inGameTime) => realWorldTime.getMonth() == 7 && realWorldTime.getDate() >= 15 && realWorldTime.getDate() <= 21 && inGameTime.getDate() > 0 && inGameTime.getDate() <= 10,
+				"description": "Forces crew to sleep?"
+			},
+			{
+				"title": "The Black Viper",
+				"location": "The Ancient Isles, West of Shark Bait Cove",
+				"isActive": (realWorldTime, inGameTime) => realWorldTime.getMonth() == 7 && realWorldTime.getDate() >= 15 && realWorldTime.getDate() <= 21 && inGameTime.getDate() > 10 && inGameTime.getDate() <= 20,
+				"description": " Poisons crew?"
+			},
+			{
+				"title": "The Siren's Gale",
+				"location": "The Wilds, East of Marauder's Arch",
+				"isActive": (realWorldTime, inGameTime) => realWorldTime.getMonth() == 7 && realWorldTime.getDate() >= 15 && realWorldTime.getDate() <= 21 && inGameTime.getDate() > 20 && inGameTime.getDate() <= 30,
+				"description": " Raises/lowers ship's sails?"
 			}
 		]
 
