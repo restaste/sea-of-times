@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>What time is it in Sea of Thieves ?</title>
+</head>
+
+<body>
+	<h1 id="GameTime"></h1>
+
+	<h2>Active events</h2>
+
+	<div id="active-event-list">
+	</div>
+
+	<script id="active-event-template" type="text/template">
+		<h3>{{title}}</h3>
+		<h4>{{location}}</h4>
+		<h4>{{description}}</h4>
+	</script>
+
+	<script type="text/javascript">
+		// Time conversion utils
+		function UtcTimeToSeaOfThievesTime(utcTime)
+		{
+			var secondsOfDay = utcTime.getHours()*60*60 + utcTime.getMinutes()*60 + utcTime.getSeconds()
+
+			// One game month maps over half a real world day.
+			// So that's 12 hours * 60 minutes * 60 seconds mapped over
+			// 30 game days * 24 game hours * 60 game minutes * 60 game seconds
+			var realWorldHalfDayInSeconds = 12*60*60
+			var oneGameMonth = 30*24*60*60
+			var secondsOfHalfDay = secondsOfDay % realWorldHalfDayInSeconds
+			var secondsInGameMonth = secondsOfHalfDay / realWorldHalfDayInSeconds * oneGameMonth
+
+			var gameDay = Math.floor(secondsInGameMonth / 60 / 60 / 24)
+			var gameHours = Math.floor((secondsInGameMonth - gameDay*24*60*60) / 60 / 60)
+			var gameMinutes = Math.floor((secondsInGameMonth - gameDay*24*60*60 - gameHours*60*60) / 60)
+
+			return new Date(1, 0, gameDay, gameHours, gameMinutes)
+		}
+
+		function SeaOfThievesTime()
+		{
+			return UtcTimeToSeaOfThievesTime(NowUtc())
+		}
+
+		function NowUtc()
+		{
+			var now = new Date()
+			return new Date(now.getTime() + (now.getTimezoneOffset() * 60000))
+		}
+
+	</script>
+
+	<script type="text/javascript">
+		// Timed events logic
+
+		var timedEvents = 
+		[
+			{
+				"title": "The Fools Stride",
+				"location": "The Shores of Plenty, North West of Smuggler's Bay",
+				"isActive": (realWorldTime, inGameTime) => realWorldTime.getMonth() == 7 && realWorldTime.getDate() >= 8 && realWorldTime.getDate() <= 14 && inGameTime.getDate() > 0 && inGameTime.getDate() <= 10,
+				"description": "Breaks crews legs",
+			},
+			{
+				"title": "The Treacherous Bounty",
+				"location": "The Ancient Isles, West of Shark Bait Cove",
+				"isActive": (realWorldTime, inGameTime) => realWorldTime.getMonth() == 7 && realWorldTime.getDate() >= 8 && realWorldTime.getDate() <= 14 && inGameTime.getDate() > 10 && inGameTime.getDate() <= 20,
+				"description": "Players can't interact with resource barrels"
+			},
+			{
+				"title": "The Enslaving Chain",
+				"location": "The Wilds, East of Marauder's Arch",
+				"isActive": (realWorldTime, inGameTime) => realWorldTime.getMonth() == 7 && realWorldTime.getDate() >= 8 && realWorldTime.getDate() <= 14 && inGameTime.getDate() > 20 && inGameTime.getDate() <= 30,
+				"description": "Raises or lowers anchor"
+			}
+		]
+
+		function* TimedEventsToShow()
+		{
+			var nowUtc = NowUtc()
+			var gameTime = SeaOfThievesTime()
+			for(var i = 0 ; i < timedEvents.length ; ++i)
+			{
+				var evt = timedEvents[i]
+				if(evt.isActive(nowUtc, gameTime))
+				{
+
+					yield evt
+				}
+			}
+		}
+	</script>
+
+	<script type="text/javascript">
+		// Presentation logic
+
+		function tick()
+		{
+			// Display current game time
+			var gameTime = SeaOfThievesTime()
+			document.getElementById("GameTime").innerHTML = "Day " + gameTime.getDate() + ", " + gameTime.getHours() + "h, " + gameTime.getMinutes() + "m."
+
+			// Display active events
+			var template = document.getElementById("active-event-template").innerHTML
+			var templatedHtml = ""
+			var timedEventsToShow = [...TimedEventsToShow()]
+			for(var i = 0 ; i < timedEventsToShow.length ; ++i)
+			{
+				templatedHtml += template.replace(/{{title}}/g, timedEventsToShow[i].title)
+										 .replace(/{{location}}/g, timedEventsToShow[i].location)
+										 .replace(/{{description}}/g, timedEventsToShow[i].description)
+			}
+			
+			document.getElementById("active-event-list").innerHTML = templatedHtml
+		}
+
+		window.setInterval(tick, 1000)
+	</script>
+</body>
+
+</html>
