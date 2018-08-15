@@ -1,5 +1,6 @@
 function UtcTimeToSeaOfThievesTime(utcTime)
 {
+    var dayOneOffsetSeconds = 4*60*60 // 04:00 UTC is day 1
     var secondsOfDay = utcTime.getHours()*60*60 + utcTime.getMinutes()*60 + utcTime.getSeconds()
 
     // One game month maps over half a real world day.
@@ -9,7 +10,7 @@ function UtcTimeToSeaOfThievesTime(utcTime)
     var oneGameMonth = 30*24*60*60
     var secondsOfHalfDay = secondsOfDay % realWorldHalfDayInSeconds
     // In game month starts at 8 am
-    var secondsOfHalfDayOffsetted = (secondsOfHalfDay - 8*60*60) % realWorldHalfDayInSeconds
+    var secondsOfHalfDayOffsetted = (secondsOfHalfDay - dayOneOffsetSeconds) % realWorldHalfDayInSeconds
     var secondsInGameMonth = secondsOfHalfDayOffsetted / realWorldHalfDayInSeconds * oneGameMonth
 
     var gameDay = Math.floor(secondsInGameMonth / 60 / 60 / 24)
